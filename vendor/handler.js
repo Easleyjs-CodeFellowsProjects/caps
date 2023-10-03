@@ -7,16 +7,11 @@ function respondToDelivery(orderDetails) {
 
 function createPickup(storeName, orderDetails) {
     return {
-        event: 'pickup',
-        time: new Date(),
-        payload:
-            {
                 store: storeName,
                 orderId: orderDetails.orderId,
                 customer: orderDetails.customer,
                 address: orderDetails.address
-            }
-    }
+           }
 }
 
 module.exports = {

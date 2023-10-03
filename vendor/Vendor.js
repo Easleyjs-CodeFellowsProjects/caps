@@ -1,4 +1,4 @@
-const eventPool = require('../eventPool');
+const { eventEmitter } = require('../eventPool');
 const { createPickup, respondToDelivery } = require('./handler');
 
 class Vendor {
@@ -7,11 +7,11 @@ class Vendor {
     }
 
     listenForDelivery(orderDetails) {
-        eventPool.on('delivered', respondToDelivery(orderDetails));
+        eventEmitter.on('delivered', (orderDetails) => { respondToDelivery(orderDetails) });
     }
 
     emitPickup(orderDetails) {
-        eventPool.emit('pickup', createPickup(this.storeName, orderDetails));
+        eventEmitter.emit('pickup', createPickup(this.storeName, orderDetails));
     }
 }
 module.exports = Vendor;

@@ -1,4 +1,4 @@
-const eventPool = require('../eventPool');
+const { eventEmitter } = require('../eventPool');
 const { respondToPickup, createDelivered } = require('./handler');
 
 class Driver {
@@ -7,11 +7,11 @@ class Driver {
     }
 
     listenForPickup(orderDetails) {
-        eventPool.on('pickup', respondToPickup(orderDetails));
+        eventEmitter.on('pickup', (orderDetails) => { respondToPickup(orderDetails) });
     }
 
     emitDelivered(orderDetails) {
-        eventPool.emit('delivered', createDelivered(orderDetails));
+        eventEmitter.emit('delivered', createDelivered(orderDetails));
     }
 }
 module.exports = Driver;

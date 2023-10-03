@@ -4,7 +4,7 @@ As a vendor, I want to be notified when my package has been delivered.
 */
 
 const { Vendor } = require('./index.js');
-const eventPool = require('../eventPool');
+const { eventEmitter } = require('../eventPool');
 const { createPickup, respondToDelivery } = require('./handler');
 
 jest.mock('../eventPool');
@@ -23,11 +23,11 @@ xdescribe('Vendor should be able to initiate Pickup events', () => {
             address: 'Kansas City, MO',
         }
 
-        eventPool.emit = jest.fn();
+        eventEmitter.emit = jest.fn();
 
         myVendor.emitPickup(orderDetails);
 
-        expect(eventPool.emit).toHaveBeenCalledWith('pickup', createPickup(myVendor.storeName, orderDetails))
+        expect(eventEmitter.emit).toHaveBeenCalledWith('pickup', createPickup(myVendor.storeName, orderDetails))
     })
 })
 
@@ -42,10 +42,10 @@ xdescribe('Vendor should be able to listen for Delivered events from the Hub', (
             address: 'Kansas City, MO',
         }
 
-        eventPool.on = jest.fn();
+        eventEmitter.on = jest.fn();
 
         myVendor.listenForDelivery(orderDetails);
 
-        expect(eventPool.on).toHaveBeenCalledWith('delivered', respondToDelivery(orderDetails));
+        expect(eventEmitter.on).toHaveBeenCalledWith('delivered', respondToDelivery(orderDetails));
     })
 })

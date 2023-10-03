@@ -1,8 +1,8 @@
 'use strict';
-const eventPool = require('../eventPool');
+const { eventEmitter } = require('../eventPool');
 
 function respondToPickup(orderDetails) {
-    eventPool.emit('in-transit', orderDetails);
+    eventEmitter.emit('in-transit', orderDetails);
 }
 
 function createDelivered(orderDetails) {
