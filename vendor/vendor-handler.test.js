@@ -9,7 +9,7 @@ const { createPickup, respondToDelivery } = require('./handler');
 
 jest.mock('../eventPool');
 
-xdescribe('Vendor should be able to initiate Pickup events', () => {
+describe('Vendor should be able to initiate Pickup events', () => {
     test('Should call .emit to initiate Pickup event with store name, order, and customer info', () => {
         const createPickupMock = jest.fn((storeName, orderDetails) => {
             return { storeName, orderDetails }
@@ -31,7 +31,7 @@ xdescribe('Vendor should be able to initiate Pickup events', () => {
     })
 })
 
-xdescribe('Vendor should be able to listen for Delivered events from the Hub', () => {
+describe('Vendor should be able to listen for Delivered events from the Hub', () => {
     test('Should recieve a delivered event, and return a thank you message to the console', () => {
         const myVendor = new Vendor("JB's Deluxe Swag");
 
@@ -46,6 +46,6 @@ xdescribe('Vendor should be able to listen for Delivered events from the Hub', (
 
         myVendor.listenForDelivery(orderDetails);
 
-        expect(eventEmitter.on).toHaveBeenCalledWith('delivered', respondToDelivery(orderDetails));
+        expect(eventEmitter.on).toHaveBeenCalledWith('delivered', expect.any(Function));
     })
 })

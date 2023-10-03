@@ -5,7 +5,7 @@ As a driver, I want to alert the system when a package has been delivered.
 */
 
 const { Driver } = require('./index.js');
-const eventPool = require('../eventPool');
+const { eventEmitter } = require('../eventPool');
 const { respondToPickup, createDelivered } = require('./handler');
 
 jest.mock('../eventPool');
@@ -19,25 +19,25 @@ const orderDetails = {
 describe('Driver should be able to listen for Pickup events, and emit in-transit event to the Hub', () => {
     test('Should listen for Pickup events', () => {    
         const myDriver = new Driver('Jean-Baptiste Blameux');
-        eventPool.on = jest.fn();
+        eventEmitter.on = jest.fn();
 
         myDriver.listenForPickup(orderDetails);
-        expect(eventPool.on).toHaveBeenCalledWith('pickup', respondToPickup(orderDetails));
+        expect(eventEmitter.on).toHaveBeenCalledWith('pickup', expect.any(Function));
     })
     test('Should emit an in-transit event to the Hub with order payload', () => {
-        eventPool.emit = jest.fn();
+        eventEmitter.emit = jest.fn();
 
         respondToPickup(orderDetails);
-        expect(eventPool.emit).toHaveBeenCalledWith('in-transit', orderDetails);
+        expect(eventEmitter.emit).toHaveBeenCalledWith('in-transit', orderDetails);
     })
 })
 
 describe('Driver should be able to initiate Delivered events', () => {
     test('Should emit Delivered event to Hub', () => {
         const myDriver = new Driver('Jean-Baptiste Blameux');
-        eventPool.on = jest.fn();
+        eventEmitter.on = jest.fn();
 
         myDriver.emitDelivered(orderDetails);
-        expect(eventPool.emit).toHaveBeenCalledWith('delivered', createDelivered(orderDetails));
+        expect(eventEmitter.emit).toHaveBeenCalledWith('delivered', createDelivered(orderDetails));
     })
 })
