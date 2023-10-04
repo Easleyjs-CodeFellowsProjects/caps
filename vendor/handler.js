@@ -5,9 +5,9 @@ function respondToDelivery(orderDetails) {
     console.log('Thank you for your order', orderDetails.customer);
 }
 
-function createPickup(storeName, orderDetails) {
+function createPickup(orderDetails) {
     return {
-                store: storeName,
+                store: orderDetails.storeName,
                 orderId: orderDetails.orderId,
                 customer: orderDetails.customer,
                 address: orderDetails.address
