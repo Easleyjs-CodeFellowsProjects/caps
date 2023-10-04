@@ -1,0 +1,17 @@
+{
+  "name": "caps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hub.js",
+  "scripts": {
+    "test": "jest --coverage --verbose",
+    "dev": "nodemon hub.js",
+    "start": "node hub.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^29.7.0"
+  }
+}
