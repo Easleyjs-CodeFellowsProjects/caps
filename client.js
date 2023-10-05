@@ -6,6 +6,7 @@ const SERVER_URL = process.env.SERVER_URL || 'http://localhost';
 const PORT = process.env.PORT || 3002
 const CONNECTION_STRING = `${SERVER_URL}:${PORT}/caps`
 const STORE_NAME = '1-206-flowers';
+const STORE_NAME2 = 'acme-widgets';
 
 const myDriver = new Driver( CONNECTION_STRING );
 const myVendor = new Vendor( CONNECTION_STRING, STORE_NAME );
@@ -21,7 +22,7 @@ console.log('Initializing Driver');
 myDriver.connect();
 myDriver.listenForPickup();
 
-
+/*
 console.log('Initializing Vendor');
 myVendor.connect();
 myVendor.listenForDelivery();
@@ -29,3 +30,4 @@ myVendor.listenForDelivery();
 console.log('Creating Delivery');
 myVendor.createPickupEmit(orderDetails);
 
+*/

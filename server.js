@@ -26,37 +26,81 @@ let server = new Server(PORT); // as soon as this line runs, we have something t
 let capsServer = server.of('/caps');
 console.log('CAPS Server Started');
 
+// Queues
+const Queue = require('./queue/Queue');
+const myVendorQueue = new Queue();
+const myDriverQueue = new Queue();
+
+// For testing. Adding some Pickup events to the Driver queue to verify that join/getAll works correctly.
+const testOrder = {
+    customer: 'Roy Thomas',
+    address: '1234 Main St., Omaha, NE 92630'
+}
+myVendorQueue.createStoreQueue('1-206-flowers');
+myDriverQueue.createStoreQueue('1-206-flowers');
+myDriverQueue.enqueue('1-206-flowers', testOrder);
+
+
 // built-in connection event -> telling the server to wait for client(socket) connections
 
 capsServer.on('connection', function(socket){
    console.log('Client connected')
    
-// try putting listeners here that way they run before room joins if it doesn't work under the join
-
-
    // Put Vendor in their store room, and Driver in driver room
-   socket.on('join', (data) => {
+   socket.on('join', async (data) => {
     if (data.clientType === 'vendor') {
         socket.join(data.storeName);
 
         //possibly do emit here to let them know they've been put in their store room
         console.log(`Client type: ${data.clientType} joined room: ${data.storeName}`);
 
-        // listen for pickups from Vendor/Store channel, do emit to Driver(s)
+        // Set up their Pickup and Delivery queues, if they don't already exist.
+        if (!myVendorQueue.hasQueue(data.storeName)) {
+            myVendorQueue.createStoreQueue(data.storeName);
+        }
+        if (!myDriverQueue.hasQueue(data.storeName)) {
+            myDriverQueue.createStoreQueue(data.storeName);
+        }    
+
+        // *New* send the Vendor their current (delivered) orders
+        const currDeliveredOrders = myVendorQueue.getAll(data.storeName);
+        socket.to(data.storeName).emit('getAllDelivered', currDeliveredOrders);
+
+        // Listen for new pickups from Vendor/Store channel, do emit to Driver(s)
         //curryPickup((socket) => (payload) => {})
+        // *New* adds pickup order to Driver queue
         socket.on('pickup', (data) => {
+         
          console.log('EVENT: \nPickup:\n', data);
-         capsServer.to('driver').emit('pickup', data);
-         //.to(data.storeName)
+        
+         // Adds metadata to original payload, stores in Driver queue
+         const newPickup = myDriverQueue.enqueue(data.storeName, data);
+
+         // Then sends updated payload object to Driver
+         capsServer.to('driver').emit('pickup', newPickup);
         })
+
+        // Acknowledge Delivery (completed), remove from Vendor queue
+        socket.on('deliveryAck', (data) => {
+            myVendorQueue.remove(data.customerId, data.orderId);
+        });
     }
     if (data.clientType === 'driver') {
-        socket.join('driver'); // driver should always join first so they can listen for pickups
 
-        //possibly do emit here to let them know they've been put in their store room
+        socket.join('driver');
+
+        // *New* send the Driver their queued pickup orders
+        socket.on('getAllPickup', () => {
+            const currPickupOrders = myDriverQueue.getAll();
+            //console.log(currPickupOrders)
+            socket.emit('getAllPickupResponse', currPickupOrders);
+        })
+
+
         console.log(`${data.clientType} joined driver room.`);
 
-        // listen for in-transit
+
+        // Server listens for in-transit
         socket.on('in-transit', (data) => {
             console.log('EVENT: \nIn-Transit:\n', data);
         })
@@ -64,7 +108,14 @@ capsServer.on('connection', function(socket){
         // listen for delivery, emit to appropriate Vendor/Store
         socket.on('delivered', (data) => {
             console.log('EVENT: \nDelivered:\n', data);
-            socket.to(data.storeName).emit('delivered', { customer: data.customer });
+
+            // Remove from Driver queue (of pickups)
+            myDriverQueue.remove(data.customerId, data.orderId);
+
+            // Add to Vendor "Delivered" queue
+            const newDelivery = myVendorQueue.enqueue(data.customerId, data);
+
+            socket.to(data.storeName).emit('delivered', newDelivery);
         })
     }
 

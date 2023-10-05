@@ -7,11 +7,14 @@ function respondToPickup(orderDetails) {
 }
 
 const respondToSocketPickup = (socket) => (orderDetails) => {
-    console.log('Driver Recieved Pickup:', orderDetails);
-
-    socket.emit('in-transit', orderDetails);
-
-    socket.emit('delivered', createSocketDelivered( orderDetails ));
+    console.log(orderDetails);
+    orderDetails.forEach(( order ) => {
+        console.log('Driver Recieved Pickup:', order);
+    
+        socket.emit('in-transit', order);
+    
+        socket.emit('delivered', createSocketDelivered( order ));
+    });
 };
 
 function createDelivered(orderDetails) {
