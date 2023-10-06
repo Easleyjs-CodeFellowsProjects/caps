@@ -35,14 +35,11 @@ class Queue {
         return [orderRecord]
     }
 
-    dequeue(storeName) {
-        return this.queue[storeName].orders.shift();
-    }
-
     // Method to remove pickup entries for Drivers
     remove( storeName, orderId ) {
-        let existingOrders = this.queue[storeName].orders;
-        existingOrders = existingOrders.filter(( order ) => order.orderId !== orderId );
+        const existingOrders = this.queue[storeName].orders;
+        const remainingOrders = existingOrders.filter(( order ) => order.orderId !== orderId );
+        this.queue[storeName].orders = remainingOrders;
     }
 
     // storeName parameter there for stores to get only their queue. 
