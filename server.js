@@ -40,7 +40,6 @@ myVendorQueue.createStoreQueue('1-206-flowers');
 myDriverQueue.createStoreQueue('1-206-flowers');
 myDriverQueue.enqueue('1-206-flowers', testOrder);
 
-
 // built-in connection event -> telling the server to wait for client(socket) connections
 
 capsServer.on('connection', function(socket){

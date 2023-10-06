@@ -11,11 +11,16 @@ class Vendor {
     }
 
     connect() {
+        // Check for existing deliveries
+        this.socket.on('getAllDeliveredResponse', respondToSocketDelivery( this.socket ));
+
         this.socket.emit('join', { 
                                    clientType: this.clientType,
                                    storeName: this.storeName
                                  }
         );
+        // listen for getAllDelivered. If there are deliveries, thank customers immediately
+        this.socket.emit('getAllDelivered', {});
     }
 
     listenForDelivery() {
