@@ -27,12 +27,12 @@ class Queue {
         }
         const orderId = `${chance.letter()}${chance.letter()}-${chance.integer({ min: 1000000, max: 3000000})}`.toUpperCase();
         const orderRecord = {
-            customerId: payload.customerId || storeName,
-            orderId: payload.orderId || orderId,
+            customerId: storeName,
+            orderId: orderId,
             order: payload
         }
         this.queue[storeName].orders.push(orderRecord);
-        return orderRecord
+        return [orderRecord]
     }
 
     dequeue(storeName) {

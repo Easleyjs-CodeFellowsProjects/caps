@@ -13,7 +13,7 @@ class Driver {
 
     connect() {
         // Check for existing pickups
-        this.socket.on('getAllPickupResponse', respondToSocketPickup( this.socket )); //(data) => { console.log(data) })
+        this.socket.on('getAllPickupResponse', respondToSocketPickup( this.socket ));
 
         this.socket.emit('join', { 
             clientType: this.clientType,
@@ -21,7 +21,6 @@ class Driver {
         );
 
         // listen for getAllPickup. If there are pickups, delivery them immediately
-        //
         this.socket.emit('getAllPickup', {});
     }
 
