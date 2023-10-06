@@ -61,9 +61,11 @@ capsServer.on('connection', function(socket){
             myDriverQueue.createStoreQueue(data.storeName);
         }    
 
-        // *New* send the Vendor their current (delivered) orders
-        const currDeliveredOrders = myVendorQueue.getAll(data.storeName);
-        socket.to(data.storeName).emit('getAllDelivered', currDeliveredOrders);
+        // *New* send the Vendor their current (delivered) orders in queue
+        socket.on('getAllPickup', (data) => {
+            const currDeliveredOrders = myVendorQueue.getAll(data.storeName);
+            socket.to(data.storeName).emit('getAllDelivered', currDeliveredOrders);
+        })
 
         // Listen for new pickups from Vendor/Store channel, do emit to Driver(s)
         //curryPickup((socket) => (payload) => {})
