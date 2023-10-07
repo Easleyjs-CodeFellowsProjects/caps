@@ -5,16 +5,21 @@ function respondToDelivery(orderDetails) {
     console.log('Thank you for your order', orderDetails.customer);
 }
 
-function createPickup(orderDetails) {
+function respondToSocketDelivery (orders) {
+    orders.forEach(( order ) => {
+        console.log( 'Thank you for your order', order.order.customer )
+    })
+}
+
+function createPickup(storeName, orderDetails) {
     return {
-                store: orderDetails.storeName,
-                orderId: orderDetails.orderId,
-                customer: orderDetails.customer,
-                address: orderDetails.address
+                storeName,
+                order: orderDetails
            }
 }
 
 module.exports = {
     createPickup,
     respondToDelivery,
+    respondToSocketDelivery,
 };

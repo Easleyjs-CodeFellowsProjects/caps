@@ -12,10 +12,16 @@ class Driver {
     }
 
     connect() {
+        // Check for existing pickups
+        this.socket.on('getAllPickupResponse', respondToSocketPickup( this.socket ));
+
         this.socket.emit('join', { 
-                                   clientType: this.clientType,
-                                 }
+            clientType: this.clientType,
+        }
         );
+
+        // listen for getAllPickup. If there are pickups, delivery them immediately
+        this.socket.emit('getAllPickup', {});
     }
 
     // List for pickup, emit "in-transit" and "delivered" events
